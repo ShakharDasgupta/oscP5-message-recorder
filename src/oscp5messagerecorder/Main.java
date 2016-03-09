@@ -23,17 +23,48 @@
  */
 package oscp5messagerecorder;
 
+import java.io.File;
+import java.util.ArrayList;
+
 /**
+ * The <code>Main</code> class is used to run the program.
  *
  * @author Christopher Wells <cwellsny@nycap.rr.com>
  */
 public class Main {
 
     /**
-     * @param args the command line arguments
+     * Runs the program using the information given via the command line
+     * arguments.
+     *
+     * @param args The command line arguments.
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        final int port;
+        final String outputFileLocation;
+        final ArrayList<String> channels;
+        final int recordInterval = 5;
+
+        if (args.length > 0 && args[0].equals("record")) {
+            if (args.length >= 4) {
+                port = Integer.parseInt(args[1]);
+                outputFileLocation = args[2];
+                File outputFile = new File(outputFileLocation);
+
+                // Get all of the wanted channels
+                channels = new ArrayList<>();
+                for (int i = 3; i < args.length; i++) {
+                    channels.add(args[i]);
+                }
+
+                // Start recording the messages
+                OscP5Recorder oscP5Recorder = new OscP5Recorder(port, outputFile, channels, recordInterval);
+            } else {
+                System.err.println("Invalid number of parameters for recording.");
+                System.exit(1);
+            }
+        }
+
     }
 
 }
