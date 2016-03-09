@@ -42,8 +42,12 @@ public class Main {
     public static void main(String[] args) {
         final int port;
         final String outputFileLocation;
+        final String inputFileLocation;
         final ArrayList<String> channels;
         final int recordInterval = 5;
+
+        File outputFile;
+        File inputFile;
 
         if (args.length == 0 || (args.length == 1 && args[0].equals("--help"))) {
             usage();
@@ -51,7 +55,7 @@ public class Main {
             if (args.length >= 4) {
                 port = Integer.parseInt(args[1]);
                 outputFileLocation = args[2];
-                File outputFile = new File(outputFileLocation);
+                outputFile = new File(outputFileLocation);
 
                 // Get all of the wanted channels
                 channels = new ArrayList<>();
@@ -65,6 +69,24 @@ public class Main {
                 System.err.println("Invalid number of parameters for recording. Try running with the '--help' flag for usage information.");
                 System.exit(1);
             }
+        } else if (args[0].equals("play")) {
+            if (args.length == 3) {
+                port = Integer.parseInt(args[1]);
+                inputFileLocation = args[2];
+                inputFile = new File(inputFileLocation);
+                
+                // Make sure that the file exists
+                if (!fileExists(inputFile)) {
+                    System.err.println("Invalid input file: " + inputFileLocation);
+                    System.exit(1);
+                }
+
+                // Start playing the messages
+                OscP5Player oscP5Player = new OscP5Player(port, inputFile);
+            } else {
+                System.err.println("Invalid number of parameters for playing. Try running with the '--help' flag for usage information.");
+                System.exit(1);
+            }
         } else {
             usage();
         }
@@ -75,11 +97,30 @@ public class Main {
      * Prints information on the usage of the program.
      */
     public static void usage() {
-        System.out.println("Usage: java -jar OscP5MessageRecorder.jar record PORT OUTPUTFILE [CHANNELS]");
+        System.out.println("Usage:");
+        System.out.println("------");
+        System.out.println("");
+        System.out.println("Recording:");
+        System.out.println("\tjava -jar OscP5MessageRecorder.jar record PORT OUTPUTFILE [CHANNELS]");
+        System.out.println("");
+        System.out.println("Playing:");
+        System.out.println("\tjava -jar OscP5MessageRecorder.jar play PORT INPUTFILE");
         System.out.println("");
         System.out.println("Examples:");
         System.out.println("\tjava -jar OscP5MessageRecorder.jar record 5000 test.xml /muse/elements/blink");
         System.out.println("\tjava -jar OscP5MessageRecorder.jar record 4999 test2.xml /muse/elements/blink /muse/elements/jaw_clench");
+        System.out.println("");
+        System.out.println("\tjava -jar OscP5MessageRecorder.jar play 5000 test.xml");
+    }
+
+    /**
+     * Checks if a given file exists or not.
+     * 
+     * @param file The file to check.
+     * @return <code>true</code> if the file exists, <code>false</code> if the file does not exist.
+     */
+    public static boolean fileExists(File file) {
+        return file.exists() && !file.isDirectory();
     }
 
 }
