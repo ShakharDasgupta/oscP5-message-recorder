@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalTime;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import java.util.ArrayList;
 import oscP5.OscEventListener;
 import oscP5.OscMessage;
@@ -50,6 +51,7 @@ public class OscP5Recorder implements OscEventListener {
 
     private final ArrayList<String[]> messages;
     private final OscP5 server;
+    private final LocalTime startTime;
 
     /**
      * Instantiates a <code>OscP5Recorder</code> with the given port and output
@@ -69,11 +71,19 @@ public class OscP5Recorder implements OscEventListener {
         this.recordCount = 0;
         this.recordInterval = recordInterval;
         this.messages = new ArrayList<>();
+        this.startTime = LocalTime.now();
         this.server = new OscP5(this, this.port);
     }
 
     /**
-     * Saves the recorded messages to the file.
+     * Saves the recorded messages to the xml file. Uses the following format:
+     * <br><br>
+     * <code>channel</code> - The channel of the message.
+     * <br><br>
+     * <code>time</code> - The time of the message since the start point in
+     * milliseconds.
+     * <br><br>
+     * <code>value</code> - The value of the message.
      */
     private void saveMessages() {
         // Construct the contents of the file
@@ -113,7 +123,7 @@ public class OscP5Recorder implements OscEventListener {
     public void oscEvent(OscMessage om) {
         for (String channel : this.channels) {
             if (om.checkAddress(channel)) {
-                this.messages.add(new String[]{channel, LocalTime.now().toString(), Float.toString(om.get(0).floatValue())});
+                this.messages.add(new String[]{channel, Long.toString(this.startTime.until(LocalTime.now(), MILLIS)), Float.toString(om.get(0).floatValue())});
 
                 if (this.recordCount == this.recordInterval) {
                     this.recordCount = 0;
