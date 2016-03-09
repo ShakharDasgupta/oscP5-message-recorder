@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Christopher Wells <cwellsny@nycap.rr.com>.
@@ -45,7 +45,9 @@ public class Main {
         final ArrayList<String> channels;
         final int recordInterval = 5;
 
-        if (args.length > 0 && args[0].equals("record")) {
+        if (args.length == 0 || (args.length == 1 && args[0].equals("--help"))) {
+            usage();
+        } else if (args[0].equals("record")) {
             if (args.length >= 4) {
                 port = Integer.parseInt(args[1]);
                 outputFileLocation = args[2];
@@ -60,11 +62,24 @@ public class Main {
                 // Start recording the messages
                 OscP5Recorder oscP5Recorder = new OscP5Recorder(port, outputFile, channels, recordInterval);
             } else {
-                System.err.println("Invalid number of parameters for recording.");
+                System.err.println("Invalid number of parameters for recording. Try running with the '--help' flag for usage information.");
                 System.exit(1);
             }
+        } else {
+            usage();
         }
 
+    }
+
+    /**
+     * Prints information on the usage of the program.
+     */
+    public static void usage() {
+        System.out.println("Usage: java -jar OscP5MessageRecorder.jar record PORT OUTPUTFILE [CHANNELS]");
+        System.out.println("");
+        System.out.println("Examples:");
+        System.out.println("\tjava -jar OscP5MessageRecorder.jar record 5000 test.xml /muse/elements/blink");
+        System.out.println("\tjava -jar OscP5MessageRecorder.jar record 4999 test2.xml /muse/elements/blink /muse/elements/jaw_clench");
     }
 
 }
