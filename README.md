@@ -23,3 +23,6 @@ For further usage information, run the jar file with the `--help` flag.
 ```
 java -jar OscP5MessageRecorder.jar --help
 ```
+
+## License
+OscP5 Message Recorder is available under [The MIT License](https://opensource.org/licenses/MIT), see `LICENSE` for more information.
