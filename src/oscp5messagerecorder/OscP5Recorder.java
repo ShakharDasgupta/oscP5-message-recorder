@@ -123,8 +123,7 @@ public class OscP5Recorder implements OscEventListener {
     public void oscEvent(OscMessage om) {
         for (String channel : this.channels) {
             if (om.checkAddress(channel)) {
-                this.messages.add(new String[]{channel, Long.toString(this.startTime.until(LocalTime.now(), MILLIS)), Float.toString(om.get(0).floatValue())});
-
+                this.messages.add(new String[]{channel, Long.toString(this.startTime.until(LocalTime.now(), MILLIS)), Integer.toString(om.get(0).intValue())});
                 if (this.recordCount == this.recordInterval) {
                     this.recordCount = 0;
                     this.saveMessages();
